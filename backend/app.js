@@ -6,7 +6,6 @@ import cors from "cors";
 import connectToDatabase from "./db/db.js";
 import authRoutes from "./routes/auth.js";
 import "./utils/cron.js";
-import cors from "cors";
 
 const allowedOrigins = [
   "http://localhost:5173",
