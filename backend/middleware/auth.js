@@ -33,8 +33,8 @@ export const verifyUser = async (req, res, next) => {
 
     next();
   } catch (err) {
-    console.log("Verification Error:", error.message);
-    return res.status(401).json({ success: false, error: error.message });
+    console.log("Verification Error:", err.message);
+    return res.status(401).json({ success: false, error: err.message });
   }
 };
 
