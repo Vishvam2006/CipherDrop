@@ -15,17 +15,22 @@ app.use(express.json());
 app.use(express.urlencoded({extended : true}));
 
 
+import cors from "cors";
+
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://cipher-drop-txrv.vercel.app"
+  "https://cipher-drop-file-share.vercel.app"
 ];
 
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("CORS not allowed"));
+      callback(new Error("CORS not allowed: " + origin));
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE"],
