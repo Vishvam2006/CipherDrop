@@ -5,6 +5,7 @@ import verifyUser from "../middleware/auth.js";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
+import { ENV } from "../lib/env.js";
 
 const router = express.Router();
 
@@ -47,7 +48,7 @@ router.post("/upload", upload.single("file"), verifyUser, async (req, res) => {
     res.json({
       message: "File uploaded Sucessfully",
       file,
-      shareLink: `http://localhost:5000/api/share/${rawToken}`,
+      shareLink: `${ENV.BASE_URL}/api/share/${rawToken}`,
     });
   } catch (error) {
     res.status(500).json({ error: "Upload failed" });
