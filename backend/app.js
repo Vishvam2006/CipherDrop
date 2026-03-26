@@ -7,6 +7,8 @@ import connectToDatabase from "./db/db.js";
 import authRoutes from "./routes/auth.js";
 import "./utils/cron.js";
 
+const app = express();
+
 const allowedOrigins = [
   "http://localhost:5173",
   "https://cipher-drop-file-share.vercel.app",
@@ -29,7 +31,6 @@ app.use(
   }),
 );
 
-const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
