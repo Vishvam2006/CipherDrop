@@ -8,13 +8,19 @@ import path from "path";
 import { ENV } from "../lib/env.js";
 
 const router = express.Router();
+const uploadDir = "uploads";
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
   },
 });
 
@@ -22,12 +28,10 @@ const upload = multer({ storage: storage });
 
 router.post("/upload", upload.single("file"), verifyUser, async (req, res) => {
   try {
-    // console.log("USER:", req.user);
-    // console.log("FILE:", req.file);
 
-    // if (!req.file) {
-    //   return res.status(400).json({ error: "No file uploaded" });
-    // }
+    if(!req.file){
+      return res.status(400).json({ error: "No file uploaded" });
+    }
 
     const rawToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto
@@ -40,7 +44,7 @@ router.post("/upload", upload.single("file"), verifyUser, async (req, res) => {
       size: req.file.size,
       user: req.user._id,
       shareToken: hashedToken,
-      expiresAt: new Date(Date.now() + 60 * 1000), //30 sec
+      expiresAt: new Date(Date.now() + 60 * 1000), //60 sec
     });
 
     await file.save();
@@ -69,7 +73,7 @@ router.get("/share/:token", async (req, res) => {
     }
 
     if (file.expiresAt && new Date() > file.expiresAt) {
-      const filePath = path.join("uploads", file.filename);
+      const filePath = path.join(uploadDir, file.filename);
 
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
@@ -79,7 +83,7 @@ router.get("/share/:token", async (req, res) => {
       return res.status(410).json({ error: "File Expired" });
     }
 
-    const filePath = path.join("uploads", file.filename);
+    const filePath = path.join(uploadDir, file.filename);
 
     res.download(filePath);
   } catch {
@@ -112,7 +116,7 @@ router.delete("/file/:id", verifyUser, async (req, res) => {
       return res.status(403).json({ error: "You Don't have access" });
     }
 
-    const filePath = path.join("uploads", file.filename);
+    const filePath = path.join(uploadDir, file.filename);
 
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
