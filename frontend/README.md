@@ -1,16 +1,42 @@
-# React + Vite
+# CipherDrop Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite frontend for the existing file-sharing backend.
 
-Currently, two official plugins are available:
+## What this UI supports
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Register and login with the backend's `/api/auth/register` and `/api/auth/login` routes
+- Upload a single file through `/api/upload` using `multipart/form-data` with the `file` field
+- List authenticated uploads from `/api/my-files`
+- Delete owned files through `/api/file/:id`
+- Use the raw share URL returned only at upload time from `/api/share/:token`
 
-## React Compiler
+## Local development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+The Vite dev server proxies `/api` to `http://localhost:5000`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+If the frontend is deployed separately, set:
+
+```bash
+VITE_API_BASE_URL=https://your-backend-origin.com
+```
+
+## Frontend structure
+
+```text
+src/
+  components/
+    auth/        Authentication UI
+    dashboard/   Upload, share, and file-history modules
+    ui/          Shared reusable UI pieces
+  context/       Auth and toast state providers
+  hooks/         Context access helpers
+  pages/         Top-level authenticated / unauthenticated screens
+  services/api/  Centralized API client and backend integrations
+  styles/        App-level styling
+  utils/         Formatting and storage helpers
+```
