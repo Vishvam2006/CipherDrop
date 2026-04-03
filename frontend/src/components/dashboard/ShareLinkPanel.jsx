@@ -16,51 +16,80 @@ export function ShareLinkPanel({ entry, now, onCopyLink, onOpenLink }) {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Section header */}
       <div className="flex items-center gap-2">
-        <Link2 size={13} className="text-indigo-500" />
-        <span className="text-xs font-semibold tracking-wider uppercase text-slate-400">Share Link</span>
+        <div className="w-6 h-6 rounded-lg bg-[var(--accent-light)] flex items-center justify-center">
+          <Link2 size={12} className="text-[var(--accent)]" />
+        </div>
+        <span className="text-xs font-semibold tracking-wider uppercase text-[var(--text-muted)]">
+          Share Link
+        </span>
       </div>
 
       {entry ? (
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-4">
+          {/* Filename + status */}
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <p className="text-sm font-semibold text-slate-800 truncate max-w-[180px]">{entry.filename}</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)] truncate max-w-[200px]">
+              {entry.filename}
+            </p>
             <StatusBadge label={expiry.label} tone={expiry.tone} />
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs text-slate-400">
+          {/* Timestamp */}
+          <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
             <Clock size={11} />
             <span>Uploaded {formatDateTime(entry.uploadDate)}</span>
           </div>
 
+          {/* Link display */}
           <div className="link-box">
-            <a href={entry.shareLink} target="_blank" rel="noreferrer"
-              className="flex-1 text-xs text-indigo-600 font-mono truncate hover:text-indigo-800 transition-colors"
-              title={entry.shareLink}>
+            <a
+              href={entry.shareLink} target="_blank" rel="noreferrer"
+              className="flex-1 text-xs text-[var(--accent)] font-mono truncate hover:underline"
+              title={entry.shareLink}
+            >
               {entry.shareLink}
             </a>
           </div>
 
+          {/* Buttons */}
           <div className="flex gap-2">
-            <button type="button" onClick={handleCopy}
-              className={`btn-primary flex-1 transition-all duration-200 ${copied ? 'bg-emerald-600 hover:bg-emerald-700' : ''}`}
-              style={copied ? { background: '#059669', boxShadow: '0 2px 8px rgba(5,150,105,0.3)' } : {}}>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className={`btn flex-1 py-2.5 text-sm rounded-xl font-semibold transition-all ${
+                copied
+                  ? 'bg-[var(--green)] text-white border border-transparent shadow-md'
+                  : 'btn-primary'
+              }`}
+            >
               {copied
-                ? <span className="flex items-center gap-1.5"><Check size={13} />Copied!</span>
-                : <span className="flex items-center gap-1.5"><Copy size={13} />Copy Link</span>}
+                ? <><Check size={14} />Copied!</>
+                : <><Copy size={14} />Copy Link</>}
             </button>
-            <button type="button" onClick={() => onOpenLink(entry.shareLink)}
-              disabled={expiry.isExpired} className="btn-secondary px-3.5" title="Open">
+            <button
+              type="button"
+              onClick={() => onOpenLink(entry.shareLink)}
+              disabled={expiry.isExpired}
+              className="btn btn-secondary px-4"
+              title="Open link"
+            >
               <ExternalLink size={14} />
             </button>
           </div>
 
-          <p className="text-xs text-slate-400 text-center">
-            {expiry.isExpired ? 'This link has expired.' : 'Copy before it expires — links cannot be recovered.'}
+          <p className="text-[11px] text-[var(--text-muted)] text-center leading-relaxed">
+            {expiry.isExpired
+              ? 'This link has expired and the file has been deleted.'
+              : 'Copy this link before it expires — cannot be recovered after.'}
           </p>
         </div>
       ) : (
-        <EmptyState title="No share link yet" description="Upload a file to get a secure link." />
+        <EmptyState
+          title="No share link yet"
+          description="Upload a file to generate a secure one-time link."
+        />
       )}
     </div>
   )

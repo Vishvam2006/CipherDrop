@@ -40,20 +40,24 @@ export function AuthHighlights() {
 
       {/* Feature list */}
       <div className="flex flex-col gap-2.5">
-        {FEATURES.map(({ icon: Icon, title, desc }) => (
-          <div
-            key={title}
-            className="surface-card-muted p-4 flex items-center gap-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-100"
-          >
-            <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0 border border-indigo-100">
-              <Icon size={16} className="text-indigo-500" />
+        {FEATURES.map((feature) => {
+          const FeatureIcon = feature.icon
+
+          return (
+            <div
+              key={feature.title}
+              className="surface-card-muted p-4 flex items-center gap-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-100"
+            >
+              <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0 border border-indigo-100">
+                <FeatureIcon size={16} className="text-indigo-500" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-800">{feature.title}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{feature.desc}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-semibold text-slate-800">{title}</p>
-              <p className="text-xs text-slate-400 mt-0.5">{desc}</p>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Stats */}

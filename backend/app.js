@@ -7,6 +7,10 @@ import connectToDatabase from "./db/db.js";
 import authRoutes from "./routes/auth.js";
 import "./utils/cron.js";
 
+import http from "http";
+import { Server } from "socket.io";
+import friendRoutes from "./routes/friend.js";
+
 const app = express();
 
 const allowedOrigins = [
@@ -14,32 +18,58 @@ const allowedOrigins = [
   "https://cipher-drop-file-share.vercel.app",
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like Postman)
-      if (!origin) return callback(null, true);
+const server = http.createServer(app);
 
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
+export const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+  },
+});
+
+export const activeUsers = new Map();
+
+io.on("connection", (socket) => {
+  socket.on("register", (userId) => {
+    if (!activeUsers.has(userId)) {
+      activeUsers.set(userId, []);
+    }
+
+    activeUsers.get(userId).push(socket.id);
+  });
+
+  socket.on("disconnect", () => {
+    for (let [userId, sockets] of activeUsers.entries()) {
+      const updated = sockets.filter((id) => id !== socket.id);
+
+      if (updated.length === 0) {
+        activeUsers.delete(userId);
       } else {
-        callback(new Error("CORS not allowed: " + origin));
+        activeUsers.set(userId, updated);
       }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  }),
-);
-
+    }
+  });
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 connectToDatabase();
 
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://cipher-drop-file-share.vercel.app",
+    ],
+    credentials: true,
+  }),
+);
+
 app.use("/api", uploadRoute);
 app.use("/api/auth", authRoutes);
+app.use("/api/friends", friendRoutes);
 
-app.listen(ENV.PORT, () => {
-  console.log(`Serve is running on ${ENV.PORT}`);
+server.listen(ENV.PORT, () => {
+  console.log(`Server is running on ${ENV.PORT}`);
 });

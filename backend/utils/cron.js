@@ -12,7 +12,7 @@ cron.schedule("* * * * *", async () => {
     });
 
     for (let file of expiredFiles) {
-      const filePath = path.join(process.cwd(), "uploads", file.filename);
+      const filePath = file.filePath;
 
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
