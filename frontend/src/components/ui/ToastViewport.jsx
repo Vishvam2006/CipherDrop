@@ -27,30 +27,26 @@ export function ToastProvider({ children }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`toast-item ${toast.tone === 'error' ? 'toast-error' : 'toast-success'}`}
+            className={`toast-enter bg-white border border-gray-200 rounded-xl px-4 py-3.5 shadow-lg flex items-start gap-3 ${
+              toast.tone === 'error' ? 'border-l-[3px] border-l-red-500' : 'border-l-[3px] border-l-green-500'
+            }`}
           >
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 shrink-0">
-                {toast.tone === 'error'
-                  ? <XCircle size={16} className="text-[var(--red)]" />
-                  : <CheckCircle2 size={16} className="text-[var(--green)]" />}
-              </div>
-              <div className="min-w-0 flex-1">
-                {toast.title && (
-                  <p className="text-sm font-semibold text-[var(--text-primary)]">{toast.title}</p>
-                )}
-                {toast.message && (
-                  <p className="text-xs text-[var(--text-muted)] mt-0.5 leading-relaxed">{toast.message}</p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => dismissToast(toast.id)}
-                className="shrink-0 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors p-0.5"
-              >
-                <X size={13} />
-              </button>
+            <div className="mt-0.5 shrink-0">
+              {toast.tone === 'error'
+                ? <XCircle size={16} className="text-red-500" />
+                : <CheckCircle2 size={16} className="text-green-500" />}
             </div>
+            <div className="flex-1 min-w-0">
+              {toast.title && <p className="text-sm font-semibold text-gray-900">{toast.title}</p>}
+              {toast.message && <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{toast.message}</p>}
+            </div>
+            <button
+              type="button"
+              onClick={() => dismissToast(toast.id)}
+              className="shrink-0 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+            >
+              <X size={13} />
+            </button>
           </div>
         ))}
       </div>
